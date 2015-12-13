@@ -11,4 +11,6 @@
 
     <string name="wikiapi_endpoint">https://en.wikipedia.org/w/api.php</string>
     <string name="wiki_search_servlet_endpoint">http://10.0.2.2:8080/com.example/GetWikiOpenSearchResultServlet</string>
+
+    <color name="wikisearch_textview_backgroundcolor_1">#cccc00</color>
 </resources>

@@ -1,6 +1,5 @@
 package com.example.bubblepedia;
 
-import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -10,9 +9,12 @@ import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,15 +31,29 @@ import Utility.IDoAsyncAction;
 public class MainActivity extends ActionBarActivity implements IDoAsyncAction {
 
     private String WIKI_SEARCH_SERVLET_ENDPOINT;
+    private ArrayAdapter adapter = null;
+    private List<String> wikiSearchResult = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
         WIKI_SEARCH_SERVLET_ENDPOINT = getResources().getString(R.string.wiki_search_servlet_endpoint);
+
+        adapter = new ArrayAdapter<String>(this, R.layout.wikisearch_listview_row, wikiSearchResult);
+        ListView listView = (ListView) findViewById(R.id.list);
+        listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                view.setBackgroundColor(getResources().getColor(R.color.wikisearch_textview_backgroundcolor_1));
+                adapter.notifyDataSetChanged();
+                view.setAlpha(1);
+            }
+        });
+
         Intent intent = getIntent();
         if (intent.ACTION_SEARCH.equals(Intent.ACTION_SEARCH)) {
             String query = intent.getStringExtra(SearchManager.QUERY);
@@ -89,15 +105,13 @@ public class MainActivity extends ActionBarActivity implements IDoAsyncAction {
     }
 
     @Override
-    public String DoBackgroundAction(String buffer){
+    public String DoBackgroundAction(String buffer) {
 
         return buffer;
     }
 
     @Override
     public void DoResult(String doBackgroundString) {
-        List<String> wikiSearchResult = new ArrayList<String>();
-
         try {
             JSONArray jarray = new JSONArray(doBackgroundString);
             String title = jarray.getString(0).toString();
@@ -105,13 +119,10 @@ public class MainActivity extends ActionBarActivity implements IDoAsyncAction {
             int l = jarraySearch.length();
             for (int i = 0; i < l; i++) {
                 wikiSearchResult.add(jarraySearch.getString(i));
+                adapter.notifyDataSetChanged();
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-        ListAdapter adapter = new ArrayAdapter<String>(this, R.layout.wikisearch_listview_row, wikiSearchResult);
-        ListView listView = (ListView) findViewById(R.id.list);
-        listView.setAdapter(adapter);
     }
 }
