@@ -1,9 +1,12 @@
 package com.example.bubblepedia;
 
-import android.support.v7.app.ActionBarActivity;
+import android.app.SearchManager;
+import android.content.Context;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.SearchView;
 
 
 public class SearchableActivity extends ActionBarActivity {
@@ -29,9 +32,7 @@ public class SearchableActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_wiki_search) {
-            return true;
-        }
+
 
         return super.onOptionsItemSelected(item);
     }
