@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView
+<!--<TextView
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:padding="10dp"
     android:textSize="20sp"
-    android:clickable="true"
     android:id="@+id/wikisearchresultrow"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:singleLine="false" />
+    android:singleLine="false" />-->
 
+
+    <Utility.WikiSearchResultTextView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:custom="http://schemas.android.com/apk/res-auto"
+        custom:toggle="false"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:padding="10dp"
+        android:textSize="20sp"
+        android:singleLine="true"
+        android:id="@+id/mywikisearchresultrow"
+        />

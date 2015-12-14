@@ -6,15 +6,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,6 +26,7 @@ import java.util.List;
 import Utility.HelperClass;
 import Utility.HttpAsyncTask;
 import Utility.IDoAsyncAction;
+import Utility.WikiSearchResultTextView;
 
 public class MainActivity extends ActionBarActivity implements IDoAsyncAction {
 
@@ -48,9 +48,14 @@ public class MainActivity extends ActionBarActivity implements IDoAsyncAction {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                view.setBackgroundColor(getResources().getColor(R.color.wikisearch_textview_backgroundcolor_1));
-                adapter.notifyDataSetChanged();
-                view.setAlpha(1);
+                WikiSearchResultTextView wikiView = (WikiSearchResultTextView) view;
+                wikiView.setToggle(!wikiView.isToggle());
+                if (wikiView.isToggle()) {
+                    wikiView.setBackgroundColor(getResources().getColor(R.color.wikisearch_textview_backgroundcolor_1));
+                } else {
+                    wikiView.setBackgroundColor(0);
+                }
+                //adapter.notifyDataSetChanged();
             }
         });
 
@@ -119,10 +124,10 @@ public class MainActivity extends ActionBarActivity implements IDoAsyncAction {
             int l = jarraySearch.length();
             for (int i = 0; i < l; i++) {
                 wikiSearchResult.add(jarraySearch.getString(i));
-                adapter.notifyDataSetChanged();
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        adapter.notifyDataSetChanged();
     }
 }
