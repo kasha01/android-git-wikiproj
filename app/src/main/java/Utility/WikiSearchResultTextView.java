@@ -12,23 +12,10 @@ import com.example.bubblepedia.R;
  * Created by Lenovo on 12/13/2015.
  */
 public class WikiSearchResultTextView extends TextView {
+    private boolean mToggle;
 
     public boolean isToggle() {
         return mToggle;
-    }
-
-    @Override
-    public void setOnClickListener(OnClickListener l) {
-        super.setOnClickListener(l);
-       /* this.setToggle(!this.isToggle());
-        if (this.isToggle()) {
-            Log.v("mylog", "toggle");
-            this.setBackgroundColor(getResources().getColor(R.color.wikisearch_textview_backgroundcolor_1));
-        } else {
-            Log.v("mylog", "no");
-            this.setBackgroundColor(0);
-        }*/
-        Log.v("mylog", "toggleeee");
     }
 
     /**
@@ -41,8 +28,6 @@ public class WikiSearchResultTextView extends TextView {
         invalidate();
         requestLayout();
     }
-
-    private boolean mToggle;
 
     public WikiSearchResultTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
