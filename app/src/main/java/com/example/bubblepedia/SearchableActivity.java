@@ -66,11 +66,11 @@ public class SearchableActivity extends ActionBarActivity implements IDoAsyncAct
     }
 
     private void doSearch(String query) throws UnsupportedEncodingException {
-        if (query != null && query != "" && HelperClass.IsNetworkConnectionAvailable(this)) {
+        if (query != null && query != "") {
             query = URLEncoder.encode(query, "UTF-8");
             String wikisearchservletUrl = WIKI_SEARCH_SERVLET_ENDPOINT + "?wikisearch=" + query;
             HttpAsyncTask asyncTask = new HttpAsyncTask(this);
-            asyncTask.execute(wikisearchservletUrl);
+            asyncTask.execute(wikisearchservletUrl,"GET");
         }
     }
 

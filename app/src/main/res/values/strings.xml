@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">BubblePedia</string>
 
-    <string name="hello_world">Hello world!!!</string>
     <string name="action_settings">Settings</string>
+    <string name="tell_us_your_thoughts">Tell us your thoughts...</string>
 
     <string name="app_label">BubblePedia</string>
     <string name="search_hint">Search Wikipedia Article</string>
@@ -11,6 +11,14 @@
 
     <string name="wikiapi_endpoint">https://en.wikipedia.org/w/api.php</string>
     <string name="wiki_search_servlet_endpoint">http://10.0.2.2:8080/com.example/GetWikiOpenSearchResultServlet</string>
+    <string name="post_wiki_bubble_toDb_servlet_endpoint">http://10.0.2.2:8080/com.example/SetWikiBubbleServlet</string>
 
     <color name="wikisearch_textview_backgroundcolor_1">#cccc00</color>
+    <string name="title_activity_wiki_bubble">WikiBubbleActivity</string>
+
+    <string name="Java_Servlet_Error">BOOM...External Server Error!</string>
+
+    <string name="USER_ID">SIGNIN_TOKEN</string>
+    <string name="MY_SHARED_PREFERENCE">MYPREF</string>
+
 </resources>

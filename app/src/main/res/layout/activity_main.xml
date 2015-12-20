@@ -39,4 +39,14 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="60dp" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Button"
+        android:id="@+id/button"
+        android:onClick="clickme"
+        android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/splash_textviewIdea"
+        android:layout_alignEnd="@+id/splash_textviewIdea" />
+
 </RelativeLayout>

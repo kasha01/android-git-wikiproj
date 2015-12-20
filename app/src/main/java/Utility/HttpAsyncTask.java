@@ -7,10 +7,14 @@ package Utility;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
@@ -30,6 +34,16 @@ public class HttpAsyncTask extends AsyncTask<String, Void, String> {
         this.context = handle;
     }
 
+
+    public void executeWithNetworkCheck(String...params){
+        if(HelperClass.IsNetworkConnectionAvailable(this.context)){
+            this.execute(params);
+        }
+        else {
+            Toast.makeText(context,"No Network",Toast.LENGTH_LONG).show();
+        }
+    }
+
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
@@ -45,13 +59,24 @@ public class HttpAsyncTask extends AsyncTask<String, Void, String> {
         progressDialog.dismiss();
     }*/
 
+    /**
+     * Parameters: 1:URL, 2:Request Method, 3: Post Parameters (if POST)
+     * */
     @Override
     protected String doInBackground(String... params) {
         char[] buffer = null;
         try {
             URL url = new URL(params[0]);
-            URLConnection connection = url.openConnection();
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setDoInput(true);
+            if(params[1].equals("POST")){
+                connection.setDoOutput(true);
+                OutputStreamWriter os = new OutputStreamWriter(connection.getOutputStream());
+                os.write(params[2]);
+                os.flush();
+                os.close();
+            }
+            connection.setRequestMethod(params[1]);
             connection.setConnectTimeout(6000);
             BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             buffer = new char[Integer.parseInt(connection.getHeaderField("Content-Length"))];
