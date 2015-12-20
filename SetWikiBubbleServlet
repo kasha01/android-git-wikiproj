@@ -1,0 +1,52 @@
+import helpers.Repository;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Servlet implementation class VoteServlet
+ */
+@WebServlet("/SetWikiBubbleServlet")
+public class SetWikiBubbleServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	public SetWikiBubbleServlet() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		String quserid = request.getParameter("userid");
+		String qcontent = request.getParameter("content");	
+		
+		String rep = "NA";
+		Repository repo;
+		
+		try {
+			repo = Repository.getInstance();
+			repo.SaveWikiBubbleToDb(Integer.parseInt(quserid), qcontent);
+			rep = "OK";
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println(e);
+		}
+		response.getWriter().write(rep);		
+	}
+}
