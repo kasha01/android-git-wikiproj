@@ -15,7 +15,7 @@ import Utility.HttpAsyncTask;
 import Utility.IDoAsyncAction;
 
 
-public class WikiBubbleActivity extends ActionBarActivity implements IDoAsyncAction<String> {
+public class WikiBubbleActivity extends ActionBarActivity implements IDoAsyncAction {
 
     private Integer userId;
 
@@ -47,7 +47,7 @@ public class WikiBubbleActivity extends ActionBarActivity implements IDoAsyncAct
         return super.onOptionsItemSelected(item);
     }
 
-    public void tagMe(View view){
+    public void gotoSearchableActivity(View view){
         TextView textView = (TextView) findViewById(R.id.bubbleTextview);
         String s = textView.getText().toString();
 
@@ -61,7 +61,7 @@ public class WikiBubbleActivity extends ActionBarActivity implements IDoAsyncAct
         }
     }
 
-    public void postContent(View view){
+    public void postContentWithoutTag(View view){
         //Write to Db
         String postParams = buildServletParams();
         HttpAsyncTask task = new HttpAsyncTask(this);

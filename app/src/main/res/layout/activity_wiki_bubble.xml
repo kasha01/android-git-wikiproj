@@ -30,7 +30,7 @@
         android:layout_alignParentRight="true"
         android:hint="Tag your post to wiki"
         android:text="Tag"
-        android:onClick="tagMe"
+        android:onClick="gotoSearchableActivity"
         />
 
     <Button
@@ -41,6 +41,6 @@
         android:layout_alignParentBottom="true"
         android:hint="Tag your post to wiki"
         android:text="Post Content"
-        android:onClick="postContent"/>
+        android:onClick="postContentWithoutTag"/>
 
 </RelativeLayout>

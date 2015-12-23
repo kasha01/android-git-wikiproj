@@ -13,30 +13,32 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
+
 import org.json.JSONArray;
 import org.json.JSONException;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import Utility.HelperClass;
+
 import Utility.HttpAsyncTask;
 import Utility.IDoAsyncAction;
 import Utility.WikiSearchResultTextView;
 
 public class SearchableActivity extends ActionBarActivity implements IDoAsyncAction {
 
-    private String WIKI_SEARCH_SERVLET_ENDPOINT;
     private ArrayAdapter adapter = null;
     private List<String> wikiSearchResult = new ArrayList<String>();
+    private List<String> list = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_searchable);
 
-        WIKI_SEARCH_SERVLET_ENDPOINT = getResources().getString(R.string.wiki_search_servlet_endpoint);
-
+        list.clear();
         adapter = new ArrayAdapter<String>(this, R.layout.wikisearch_listview_row, wikiSearchResult);
         ListView listView = (ListView) findViewById(R.id.list);
         listView.setAdapter(adapter);
@@ -48,8 +50,10 @@ public class SearchableActivity extends ActionBarActivity implements IDoAsyncAct
                 wikiView.setToggle(!wikiView.isToggle());
                 if (wikiView.isToggle()) {
                     wikiView.setBackgroundColor(getResources().getColor(R.color.wikisearch_textview_backgroundcolor_1));
+                    list.add(wikiView.getText().toString());
                 } else {
                     wikiView.setBackgroundColor(0);
+                    list.remove(wikiView.getText().toString());
                 }
             }
         });
@@ -63,14 +67,16 @@ public class SearchableActivity extends ActionBarActivity implements IDoAsyncAct
                 e.printStackTrace();
             }
         }
+
+
     }
 
     private void doSearch(String query) throws UnsupportedEncodingException {
         if (query != null && query != "") {
             query = URLEncoder.encode(query, "UTF-8");
-            String wikisearchservletUrl = WIKI_SEARCH_SERVLET_ENDPOINT + "?wikisearch=" + query;
+            String wikisearchservletUrl = getResources().getString(R.string.wiki_search_servlet_endpoint) + "?wikisearch=" + query;
             HttpAsyncTask asyncTask = new HttpAsyncTask(this);
-            asyncTask.execute(wikisearchservletUrl,"GET");
+            asyncTask.executeWithNetworkCheck(wikisearchservletUrl,"GET");
         }
     }
 
@@ -106,7 +112,6 @@ public class SearchableActivity extends ActionBarActivity implements IDoAsyncAct
 
     @Override
     public String DoBackgroundAction(String buffer) {
-
         return buffer;
     }
 
@@ -124,5 +129,26 @@ public class SearchableActivity extends ActionBarActivity implements IDoAsyncAct
             e.printStackTrace();
         }
         adapter.notifyDataSetChanged();
+    }
+
+    public void postContentWithTag(View view){
+        //Write to Db
+        String postParams = buildServletParams();
+        HttpAsyncTask task = new HttpAsyncTask(this);
+        task.executeWithNetworkCheck(getResources().getString(R.string.post_wiki_bubble_toDb_servlet_endpoint), "POST", postParams);
+    }
+
+    private String buildServletParams() {
+        JSONArray jsonArray = new JSONArray();
+        for(String s:list){
+            jsonArray.put(s);
+        }
+        String postParams = "";
+        Integer userId = 0;
+        //TextView textView = (TextView) findViewById(R.id.bubbleTextview);
+        String wikiBubbleContent = "fake content";
+
+        postParams = String.format("userid=%d&content=%s&tag=%s",userId,wikiBubbleContent,jsonArray.toString());
+        return postParams;
     }
 }
