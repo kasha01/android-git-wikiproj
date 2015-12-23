@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -117,6 +119,11 @@ public class SearchableActivity extends ActionBarActivity implements IDoAsyncAct
 
     @Override
     public void DoResult(String doBackgroundString) {
+        if(doBackgroundString == null){
+            Toast.makeText(this, getResources().getString(R.string.Java_Servlet_Error), Toast.LENGTH_LONG).show();
+            return;
+        }
+
         try {
             JSONArray jarray = new JSONArray(doBackgroundString);
             String title = jarray.getString(0).toString();
@@ -144,9 +151,8 @@ public class SearchableActivity extends ActionBarActivity implements IDoAsyncAct
             jsonArray.put(s);
         }
         String postParams = "";
-        Integer userId = 0;
-        //TextView textView = (TextView) findViewById(R.id.bubbleTextview);
-        String wikiBubbleContent = "fake content";
+        Integer userId = 4;
+        String wikiBubbleContent = getIntent().getStringExtra("content");
 
         postParams = String.format("userid=%d&content=%s&tag=%s",userId,wikiBubbleContent,jsonArray.toString());
         return postParams;

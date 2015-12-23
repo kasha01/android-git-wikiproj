@@ -85,7 +85,7 @@ public class WikiBubbleActivity extends ActionBarActivity implements IDoAsyncAct
 
     @Override
     public void DoResult(String doBackgroundString) {
-        if(doBackgroundString.equals("NA")){
+        if(doBackgroundString == null || doBackgroundString.equals("NA")){
             Toast.makeText(this,getResources().getString(R.string.Java_Servlet_Error),Toast.LENGTH_LONG).show();
         }
     }

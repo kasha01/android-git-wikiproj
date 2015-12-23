@@ -7,6 +7,9 @@ package Utility;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.widget.Toast;
+
+import com.example.bubblepedia.R;
 
 public class HelperClass {
 

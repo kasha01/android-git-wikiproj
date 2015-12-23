@@ -7,6 +7,7 @@ package Utility;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.bubblepedia.R;
@@ -78,6 +79,11 @@ public class HttpAsyncTask extends AsyncTask<String, Void, String> {
             }
             connection.setRequestMethod(params[1]);
             connection.setConnectTimeout(6000);
+
+            if(!connection.getHeaderField("Status").equals("200")){
+                return null;
+            }
+
             BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             buffer = new char[Integer.parseInt(connection.getHeaderField("Content-Length"))];
             int bytesRead = 0;
