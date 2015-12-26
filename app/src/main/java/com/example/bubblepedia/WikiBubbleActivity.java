@@ -3,8 +3,8 @@ package com.example.bubblepedia;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,7 +15,7 @@ import Utility.HttpAsyncTask;
 import Utility.IDoAsyncAction;
 
 
-public class WikiBubbleActivity extends ActionBarActivity implements IDoAsyncAction {
+public class WikiBubbleActivity extends AppCompatActivity implements IDoAsyncAction {
 
     private Integer userId;
 

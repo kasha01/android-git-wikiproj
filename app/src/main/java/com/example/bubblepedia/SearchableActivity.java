@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -13,6 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -32,6 +32,7 @@ public class SearchableActivity extends AppCompatActivity implements IDoAsyncAct
     private ArrayAdapter adapter = null;
     private List<String> wikiSearchResult = new ArrayList<String>();
     private List<String> list = new ArrayList<>();
+    private SearchView searchView = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,8 +58,15 @@ public class SearchableActivity extends AppCompatActivity implements IDoAsyncAct
                 }
             }
         });
+    }
 
-        Intent intent = getIntent();
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent){
         if (intent.ACTION_SEARCH.equals(Intent.ACTION_SEARCH)) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             try {
@@ -87,8 +95,8 @@ public class SearchableActivity extends AppCompatActivity implements IDoAsyncAct
         //Before we can use the SearchView: we need to associate the Search Widget with the Searchable Configuration
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-        //searchView.setIconifiedByDefault(false);
+        searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setIconifiedByDefault(false);
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
 
@@ -116,6 +124,11 @@ public class SearchableActivity extends AppCompatActivity implements IDoAsyncAct
 
     @Override
     public void DoResult(String doBackgroundString) {
+
+        searchView.setIconified(true);
+        adapter.clear();
+        list.clear();
+
         if (doBackgroundString == null) {
             Toast.makeText(this, getResources().getString(R.string.Java_Servlet_Error), Toast.LENGTH_LONG).show();
             return;
@@ -123,7 +136,7 @@ public class SearchableActivity extends AppCompatActivity implements IDoAsyncAct
 
         try {
             JSONArray jarray = new JSONArray(doBackgroundString);
-            String title = jarray.getString(0).toString();
+            //String title = jarray.getString(0).toString();
             JSONArray jarraySearch = new JSONArray(jarray.get(1).toString());
             int l = jarraySearch.length();
             for (int i = 0; i < l; i++) {
