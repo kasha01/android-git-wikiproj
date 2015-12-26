@@ -4,9 +4,8 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,7 +13,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -29,7 +27,7 @@ import Utility.HttpAsyncTask;
 import Utility.IDoAsyncAction;
 import Utility.WikiSearchResultTextView;
 
-public class SearchableActivity extends ActionBarActivity implements IDoAsyncAction {
+public class SearchableActivity extends AppCompatActivity implements IDoAsyncAction {
 
     private ArrayAdapter adapter = null;
     private List<String> wikiSearchResult = new ArrayList<String>();
@@ -69,8 +67,6 @@ public class SearchableActivity extends ActionBarActivity implements IDoAsyncAct
                 e.printStackTrace();
             }
         }
-
-
     }
 
     private void doSearch(String query) throws UnsupportedEncodingException {
@@ -78,7 +74,7 @@ public class SearchableActivity extends ActionBarActivity implements IDoAsyncAct
             query = URLEncoder.encode(query, "UTF-8");
             String wikisearchservletUrl = getResources().getString(R.string.wiki_search_servlet_endpoint) + "?wikisearch=" + query;
             HttpAsyncTask asyncTask = new HttpAsyncTask(this);
-            asyncTask.executeWithNetworkCheck(wikisearchservletUrl,"GET");
+            asyncTask.executeWithNetworkCheck(wikisearchservletUrl, "GET");
         }
     }
 
@@ -92,6 +88,7 @@ public class SearchableActivity extends ActionBarActivity implements IDoAsyncAct
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        //searchView.setIconifiedByDefault(false);
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
 
@@ -119,7 +116,7 @@ public class SearchableActivity extends ActionBarActivity implements IDoAsyncAct
 
     @Override
     public void DoResult(String doBackgroundString) {
-        if(doBackgroundString == null){
+        if (doBackgroundString == null) {
             Toast.makeText(this, getResources().getString(R.string.Java_Servlet_Error), Toast.LENGTH_LONG).show();
             return;
         }
@@ -138,7 +135,7 @@ public class SearchableActivity extends ActionBarActivity implements IDoAsyncAct
         adapter.notifyDataSetChanged();
     }
 
-    public void postContentWithTag(View view){
+    public void postContentWithTag(View view) {
         //Write to Db
         String postParams = buildServletParams();
         HttpAsyncTask task = new HttpAsyncTask(this);
@@ -147,14 +144,14 @@ public class SearchableActivity extends ActionBarActivity implements IDoAsyncAct
 
     private String buildServletParams() {
         JSONArray jsonArray = new JSONArray();
-        for(String s:list){
+        for (String s : list) {
             jsonArray.put(s);
         }
         String postParams = "";
         Integer userId = 4;
         String wikiBubbleContent = getIntent().getStringExtra("content");
 
-        postParams = String.format("userid=%d&content=%s&tag=%s",userId,wikiBubbleContent,jsonArray.toString());
+        postParams = String.format("userid=%d&content=%s&tag=%s", userId, wikiBubbleContent, jsonArray.toString());
         return postParams;
     }
 }

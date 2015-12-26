@@ -47,6 +47,7 @@
         android:onClick="clickme"
         android:layout_alignParentTop="true"
         android:layout_alignRight="@+id/splash_textviewIdea"
-        android:layout_alignEnd="@+id/splash_textviewIdea" />
+        android:layout_alignEnd="@+id/splash_textviewIdea"
+        android:background="@drawable/flatbutton"/>
 
 </RelativeLayout>

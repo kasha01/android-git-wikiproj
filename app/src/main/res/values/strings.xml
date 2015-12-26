@@ -5,7 +5,7 @@
     <string name="tell_us_your_thoughts">Tell us your thoughts...</string>
 
     <string name="app_label">BubblePedia</string>
-    <string name="search_hint">Search Wikipedia Article</string>
+    <string name="search_hint">Search Wikipedia..</string>
     <string name="title_activity_searchable">Searchable Activity</string>
     <string name="search_title">Search Wiki</string>
 
@@ -13,7 +13,6 @@
     <string name="wiki_search_servlet_endpoint">http://10.0.2.2:8080/com.example/GetWikiOpenSearchResultServlet</string>
     <string name="post_wiki_bubble_toDb_servlet_endpoint">http://10.0.2.2:8080/com.example/SetWikiBubbleServlet</string>
 
-    <color name="wikisearch_textview_backgroundcolor_1">#cccc00</color>
     <string name="title_activity_wiki_bubble">WikiBubbleActivity</string>
 
     <string name="Java_Servlet_Error">BOOM...External Server Error!</string>
