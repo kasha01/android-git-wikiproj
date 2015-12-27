@@ -4,11 +4,14 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.SearchRecentSuggestions;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -62,6 +65,7 @@ public class SearchableActivity extends AppCompatActivity implements IDoAsyncAct
 
     @Override
     protected void onNewIntent(Intent intent) {
+        Log.v("mytag","NewIntent");
         super.onNewIntent(intent);
         handleIntent(intent);
     }
@@ -83,7 +87,15 @@ public class SearchableActivity extends AppCompatActivity implements IDoAsyncAct
             String wikisearchservletUrl = getResources().getString(R.string.wiki_search_servlet_endpoint) + "?wikisearch=" + query;
             HttpAsyncTask asyncTask = new HttpAsyncTask(this);
             asyncTask.executeWithNetworkCheck(wikisearchservletUrl, "GET");
+
+            saveQueryForSuggestion(query);
         }
+    }
+
+    private void saveQueryForSuggestion(String query) {
+        SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
+                MySuggestionProvider.AUTHORITY, MySuggestionProvider.MODE);
+        suggestions.saveRecentQuery(query, null);
     }
 
     @Override
@@ -96,10 +108,10 @@ public class SearchableActivity extends AppCompatActivity implements IDoAsyncAct
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-        searchView.setIconifiedByDefault(false);
+        searchView.setIconifiedByDefault(false);//senuWolf
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
-
+        //searchView.requestFocus();
         return true;
     }
 
@@ -125,7 +137,6 @@ public class SearchableActivity extends AppCompatActivity implements IDoAsyncAct
     @Override
     public void DoResult(String doBackgroundString) {
 
-        searchView.setIconified(true);
         adapter.clear();
         list.clear();
 
@@ -146,6 +157,10 @@ public class SearchableActivity extends AppCompatActivity implements IDoAsyncAct
             e.printStackTrace();
         }
         adapter.notifyDataSetChanged();
+        //searchView.setQuery("", false);
+        searchView.setIconified(true);
+        searchView.clearFocus();
+        Log.v("mytag", "End Search");
     }
 
     public void postContentWithTag(View view) {
@@ -166,5 +181,11 @@ public class SearchableActivity extends AppCompatActivity implements IDoAsyncAct
 
         postParams = String.format("userid=%d&content=%s&tag=%s", userId, wikiBubbleContent, jsonArray.toString());
         return postParams;
+    }
+
+    public void clearSearchHistory(MenuItem menuItem){
+        SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
+                MySuggestionProvider.AUTHORITY, MySuggestionProvider.MODE);
+        suggestions.clearHistory();
     }
 }

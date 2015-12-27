@@ -10,6 +10,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+
         <activity
             android:name=".MainActivity"
             android:label="Bubble Pedia" >
@@ -18,6 +19,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".SearchableActivity"
             android:launchMode="singleTop"
@@ -30,10 +32,15 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
+
         <activity
             android:name=".WikiBubbleActivity"
             android:label="@string/title_activity_wiki_bubble" >
         </activity>
+
+        <provider android:name=".MySuggestionProvider"
+            android:authorities="com.example.MySuggestionProvider" />
+
     </application>
 
 </manifest>
