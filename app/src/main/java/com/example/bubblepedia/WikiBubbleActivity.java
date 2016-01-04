@@ -3,11 +3,12 @@ package com.example.bubblepedia;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,10 +20,37 @@ public class WikiBubbleActivity extends AppCompatActivity implements IDoAsyncAct
 
     private Integer userId;
 
+    public static final String CONTENT_MESSAGE = "com.example.bubblepedia.content";
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.v("mytag", "Stopped");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.v("mytag","PAUSED");
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.v("mytag", "Created");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wiki_bubble);
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.v("mytag","Destoryed");
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
     @Override
@@ -53,7 +81,7 @@ public class WikiBubbleActivity extends AppCompatActivity implements IDoAsyncAct
 
         if(!s.trim().equals("")){
             Intent intent = new Intent(this,SearchableActivity.class);
-            intent.putExtra("content", textView.getText());
+            intent.putExtra(CONTENT_MESSAGE, s);
             startActivity(intent);
         }
         else{
@@ -66,6 +94,9 @@ public class WikiBubbleActivity extends AppCompatActivity implements IDoAsyncAct
         String postParams = buildServletParams();
         HttpAsyncTask task = new HttpAsyncTask(this);
         task.executeWithNetworkCheck(getResources().getString(R.string.post_wiki_bubble_toDb_servlet_endpoint), "POST", postParams);
+        Intent intent = new Intent(this,WikiBubbleActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     private String buildServletParams() {
@@ -87,6 +118,8 @@ public class WikiBubbleActivity extends AppCompatActivity implements IDoAsyncAct
     public void DoResult(String doBackgroundString) {
         if(doBackgroundString == null || doBackgroundString.equals("NA")){
             Toast.makeText(this,getResources().getString(R.string.Java_Servlet_Error),Toast.LENGTH_LONG).show();
+        }else {
+            Toast.makeText(this,getResources().getString(R.string.Java_Servlet_Post_Success),Toast.LENGTH_LONG).show();
         }
     }
 

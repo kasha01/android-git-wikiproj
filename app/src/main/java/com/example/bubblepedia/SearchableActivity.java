@@ -11,7 +11,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -36,6 +35,7 @@ public class SearchableActivity extends AppCompatActivity implements IDoAsyncAct
     private List<String> wikiSearchResult = new ArrayList<String>();
     private List<String> list = new ArrayList<>();
     private SearchView searchView = null;
+    private boolean IsPost = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +83,7 @@ public class SearchableActivity extends AppCompatActivity implements IDoAsyncAct
 
     private void doSearch(String query) throws UnsupportedEncodingException {
         if (query != null && query != "") {
+            IsPost = false;
             query = URLEncoder.encode(query, "UTF-8");
             String wikisearchservletUrl = getResources().getString(R.string.wiki_search_servlet_endpoint) + "?wikisearch=" + query;
             HttpAsyncTask asyncTask = new HttpAsyncTask(this);
@@ -143,7 +144,12 @@ public class SearchableActivity extends AppCompatActivity implements IDoAsyncAct
         if (doBackgroundString == null) {
             Toast.makeText(this, getResources().getString(R.string.Java_Servlet_Error), Toast.LENGTH_LONG).show();
             return;
+        }else if (doBackgroundString != null && IsPost) {
+            Toast.makeText(this,getResources().getString(R.string.Java_Servlet_Post_Success),Toast.LENGTH_LONG).show();
+            return;
         }
+
+        IsPost = false; //reset Flag
 
         try {
             JSONArray jarray = new JSONArray(doBackgroundString);
@@ -165,9 +171,13 @@ public class SearchableActivity extends AppCompatActivity implements IDoAsyncAct
 
     public void postContentWithTag(View view) {
         //Write to Db
+        IsPost = true;
         String postParams = buildServletParams();
         HttpAsyncTask task = new HttpAsyncTask(this);
         task.executeWithNetworkCheck(getResources().getString(R.string.post_wiki_bubble_toDb_servlet_endpoint), "POST", postParams);
+        Intent intent = new Intent(this,WikiBubbleActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     private String buildServletParams() {
@@ -177,8 +187,7 @@ public class SearchableActivity extends AppCompatActivity implements IDoAsyncAct
         }
         String postParams = "";
         Integer userId = 4;
-        String wikiBubbleContent = getIntent().getStringExtra("content");
-
+        String wikiBubbleContent = getIntent().getStringExtra(WikiBubbleActivity.CONTENT_MESSAGE);
         postParams = String.format("userid=%d&content=%s&tag=%s", userId, wikiBubbleContent, jsonArray.toString());
         return postParams;
     }

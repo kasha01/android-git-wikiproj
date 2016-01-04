@@ -16,6 +16,7 @@
     <string name="title_activity_wiki_bubble">WikiBubbleActivity</string>
 
     <string name="Java_Servlet_Error">BOOM...External Server Error!</string>
+    <string name="Java_Servlet_Post_Success">We got your think bubble</string>
 
     <string name="USER_ID">SIGNIN_TOKEN</string>
     <string name="MY_SHARED_PREFERENCE">MYPREF</string>
