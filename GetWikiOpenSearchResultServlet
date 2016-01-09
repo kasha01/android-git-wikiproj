@@ -1,0 +1,80 @@
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
+@WebServlet("/GetWikiOpenSearchResultServlet")
+public class GetWikiOpenSearchResultServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	public GetWikiOpenSearchResultServlet() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	protected void doGet(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		
+		String qurl = "https://en.wikipedia.org/w/api.php?action=opensearch&search=" + request.getParameter("wikisearch");
+		 
+		URL url = new URL(qurl);		
+		URLConnection con = url.openConnection();
+		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+		String result = "";
+        String line = "";   
+        
+        
+        
+        while ((result = in.readLine()) != null) {
+            line = line + result;
+        }
+		in.close();
+		
+		
+		/*
+		try {
+			response.getWriter().write(convertBufferToJson(line));
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+		
+		response.setContentLength(line.getBytes().length);
+		response.getOutputStream().write(line.getBytes());
+		response.getOutputStream().flush();
+		response.getOutputStream().close();	
+	}
+
+	private String convertBufferToJson(String line) throws JSONException {
+		// TODO Auto-generated method stub
+		JSONArray jarray = new JSONArray(line);
+		String title = jarray.getString(0).toString();
+		
+		JSONArray jarraySearch = new JSONArray(jarray.get(1).toString());
+		
+		String s = "";
+		for (int i = 0 ; i<jarraySearch.length();i++){
+			s= s + " | " + jarraySearch.getString(i);
+		}
+		
+		return s;
+		
+	}
+
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+	}
+
+}
