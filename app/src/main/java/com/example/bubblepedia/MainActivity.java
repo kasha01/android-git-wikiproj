@@ -27,5 +27,6 @@ public class MainActivity extends Activity {
     public void clickme(View view){
         Intent intent = new Intent(this,WikiBubbleActivity.class);
         startActivity(intent);
+        this.finish();
     }
 }

@@ -7,18 +7,19 @@ package Utility;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.Toast;
+
+import com.example.bubblepedia.R;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.net.URLConnection;
 
 /**
  * Gets the Votes from Db and Populate Votes Headline Fragment
@@ -40,7 +41,7 @@ public class HttpAsyncTask extends AsyncTask<String, Void, String> {
             this.execute(params);
         }
         else {
-            Toast.makeText(context,"No Network",Toast.LENGTH_LONG).show();
+            Toast.makeText(context,"No Network Connection",Toast.LENGTH_LONG).show();
         }
     }
 
@@ -78,6 +79,11 @@ public class HttpAsyncTask extends AsyncTask<String, Void, String> {
             }
             connection.setRequestMethod(params[1]);
             connection.setConnectTimeout(6000);
+
+            if(!connection.getHeaderField("Status").equals("200")){
+                return null;
+            }
+
             BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             buffer = new char[Integer.parseInt(connection.getHeaderField("Content-Length"))];
             int bytesRead = 0;
@@ -101,7 +107,12 @@ public class HttpAsyncTask extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        action.DoResult(s);
+        if(s != null){
+            // Null is returned only in case of error in the doBackground
+            action.DoResult(s);
+        }else{
+            Toast.makeText(context,context.getResources().getString(R.string.Java_Servlet_Error),Toast.LENGTH_LONG).show();
+        }
         progressDialog.dismiss();
     }
 
