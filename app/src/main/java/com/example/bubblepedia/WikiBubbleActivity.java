@@ -109,10 +109,12 @@ public class WikiBubbleActivity extends AppCompatActivity implements IDoAsyncAct
         return postParams;
     }
 
+/*
     @Override
     public String DoBackgroundAction(String buffer) {
         return buffer;
     }
+*/
 
     @Override
     public void DoResult(String doBackgroundString) {

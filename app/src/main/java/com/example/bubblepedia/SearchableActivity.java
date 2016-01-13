@@ -130,10 +130,12 @@ public class SearchableActivity extends AppCompatActivity implements IDoAsyncAct
         return super.onOptionsItemSelected(item);
     }
 
+/*
     @Override
     public String DoBackgroundAction(String buffer) {
         return buffer;
     }
+*/
 
     @Override
     public void DoResult(String doBackgroundString) {

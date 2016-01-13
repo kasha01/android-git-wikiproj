@@ -32,50 +32,50 @@ import javax.inject.Named;
         )
 )
 public class MyEndpoint {
+    private MyBean response;
     private Connection con;
     private Statement st;
     private ResultSet rs;
 
 
-    /**
-     * A simple endpoint method that takes a name and says Hi back
-     */
-    @ApiMethod(name = "sayHi")
-    public MyBean sayHi(@Named("name") String name) {
-        MyBean response = new MyBean();
-        response.setData("Hiiiii, " + name);
-
-        return response;
+    public MyEndpoint(){
+        response = new MyBean();
     }
 
-    /**
-     * A simple endpoint method that takes a name and says Hi back
-     */
-    @ApiMethod(name = "sayWiki")
-    public MyBean sayWiki() throws SQLException {
-        MyBean response = new MyBean();
-        String line = "From_";
-
-        String url = null;
+    private String getConnectionUrl(){
+        String url = "";
         try {
             if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
-                line = line + "PORDUCTION_";
                 Class.forName("com.mysql.jdbc.GoogleDriver");
                 url = "jdbc:google:mysql://mytestproject-1812:mysql56/test?user=root";
             } else {
-                line = line + "DEV_";
-                // Local MySQL instance to use during development.
                 Class.forName("com.mysql.jdbc.Driver");
                 //con = DriverManager.getConnection("jdbc:mysql://localhost:3306/TEST", "root", "isql1");
                 url = "jdbc:mysql://localhost:3306/TEST?user=root&password=isql1";
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return response;
         }
+        finally {
+            return url;
+        }
+    }
+
+    /**
+     * A simple endpoint method that takes a name and says Hi back
+     */
+    @ApiMethod(name = "sayHi")
+    public MyBean sayHi(@Named("name") String name) {
+        response.setData("Hiiiii, " + name);
+        return response;
+    }
+
+    @ApiMethod(name = "sayWiki")
+    public MyBean sayWiki() throws SQLException {
+        String line = "From_";
 
         try {
-            con = DriverManager.getConnection(url);
+            con = DriverManager.getConnection(getConnectionUrl());
             st = con.createStatement();
             rs = st.executeQuery("select Tag from wikibubbletag where TagId = 22");
             while (rs.next()) {

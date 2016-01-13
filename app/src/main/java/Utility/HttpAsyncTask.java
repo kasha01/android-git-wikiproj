@@ -101,7 +101,8 @@ public class HttpAsyncTask extends AsyncTask<String, Void, String> {
             e.printStackTrace();
             return null;
         }
-        return action.DoBackgroundAction(new String(buffer));
+        //return action.DoBackgroundAction(new String(buffer));
+        return "";
     }
 
     @Override

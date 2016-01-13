@@ -7,8 +7,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Pair;
 import android.view.View;
+import android.widget.Toast;
 
-public class MainActivity extends Activity {
+import Utility.EndpointsAsyncTaskHelper;
+import Utility.IDoAsyncAction;
+
+public class MainActivity extends Activity implements IDoAsyncAction {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,9 +31,14 @@ public class MainActivity extends Activity {
     }
 
     public void clickme(View view){
-        new EndpointsAsyncTask().execute(new Pair<Context, String>(this,"Manifold"));
+        new EndpointsAsyncTaskHelper(this).executeWithNetworkCheck("sayHi","Jamica");
         /*Intent intent = new Intent(this,WikiBubbleActivity.class);
         startActivity(intent);
         this.finish();*/
+    }
+
+    @Override
+    public void DoResult(String doBackgroundString) {
+        Toast.makeText(this, doBackgroundString + "_From override", Toast.LENGTH_LONG).show();
     }
 }
