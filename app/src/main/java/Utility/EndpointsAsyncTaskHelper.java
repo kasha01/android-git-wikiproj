@@ -7,10 +7,12 @@ import android.widget.Toast;
 import com.example.bubblepedia.EndpointsAsyncTask;
 import com.example.bubblepedia.R;
 
+import org.json.JSONObject;
+
 /**
  * Gets the Votes from Db and Populate Votes Headline Fragment
  */
-public class EndpointsAsyncTaskHelper extends EndpointsAsyncTask {
+public class EndpointsAsyncTaskHelper {/*
 
     private IDoAsyncAction action;
     private ProgressDialog progressDialog;
@@ -21,10 +23,10 @@ public class EndpointsAsyncTaskHelper extends EndpointsAsyncTask {
         this.context = handle;
     }
 
-    public void executeWithNetworkCheck(String apiServiceName ,String params){
+    public void executeWithNetworkCheck(String apiServiceName ,JSONObject params){
         if(HelperClass.IsNetworkConnectionAvailable(this.context)){
             super.params = params;
-            super.execute(new Pair<Context,String>(context,apiServiceName));
+            super.execute(new Pair<Context, String>(context, apiServiceName));
         }
         else {
             Toast.makeText(context,"No Network Connection",Toast.LENGTH_LONG).show();
@@ -56,5 +58,5 @@ public class EndpointsAsyncTaskHelper extends EndpointsAsyncTask {
     protected void onCancelled() {
         super.onCancelled();
         progressDialog.dismiss();
-    }
+    }*/
 }

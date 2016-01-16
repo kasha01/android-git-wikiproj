@@ -12,13 +12,17 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import Utility.ApiMethods;
+import Utility.EndpointsAsyncTaskHelper;
 import Utility.HttpAsyncTask;
 import Utility.IDoAsyncAction;
+import Utility.MasterParam;
 
 
 public class WikiBubbleActivity extends AppCompatActivity implements IDoAsyncAction {
-
-    private Integer userId;
 
     public static final String CONTENT_MESSAGE = "com.example.bubblepedia.content";
 
@@ -31,7 +35,7 @@ public class WikiBubbleActivity extends AppCompatActivity implements IDoAsyncAct
     @Override
     protected void onPause() {
         super.onPause();
-        Log.v("mytag","PAUSED");
+        Log.v("mytag", "PAUSED");
     }
 
     @Override
@@ -43,7 +47,7 @@ public class WikiBubbleActivity extends AppCompatActivity implements IDoAsyncAct
 
     @Override
     protected void onDestroy() {
-        Log.v("mytag","Destoryed");
+        Log.v("mytag", "Destoryed");
         super.onDestroy();
     }
 
@@ -75,58 +79,41 @@ public class WikiBubbleActivity extends AppCompatActivity implements IDoAsyncAct
         return super.onOptionsItemSelected(item);
     }
 
-    public void gotoSearchableActivity(View view){
+    public void gotoSearchableActivity(View view) {
         TextView textView = (TextView) findViewById(R.id.bubbleTextview);
         String s = textView.getText().toString();
 
-        if(!s.trim().equals("")){
-            Intent intent = new Intent(this,SearchableActivity.class);
+        if (!s.trim().equals("")) {
+            Intent intent = new Intent(this, SearchableActivity.class);
             intent.putExtra(CONTENT_MESSAGE, s);
             startActivity(intent);
-        }
-        else{
-            Toast.makeText(this,"No Content",Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "No Content", Toast.LENGTH_SHORT).show();
         }
     }
 
-    public void postContentWithoutTag(View view){
-        //Write to Db
-        String postParams = buildServletParams();
-        HttpAsyncTask task = new HttpAsyncTask(this);
-        task.executeWithNetworkCheck(getResources().getString(R.string.post_wiki_bubble_toDb_servlet_endpoint), "POST", postParams);
-        Intent intent = new Intent(this,WikiBubbleActivity.class);
-        startActivity(intent);
-        finish();
-    }
-
-    private String buildServletParams() {
-        String postParams = "";
-        Integer userId = getUserId();
+    public void postContentWithoutTag(View view) {
+        String userId = getUserId();
         TextView textView = (TextView) findViewById(R.id.bubbleTextview);
         String wikiBubbleContent = textView.getText().toString();
-
-        postParams = String.format("userid=%d&content=%s",userId,wikiBubbleContent);
-        return postParams;
+        if (wikiBubbleContent != null && wikiBubbleContent != "") {
+            Map<String, String> m = new HashMap<>();
+            m.put("userid", userId);
+            m.put("content", wikiBubbleContent);
+            new EndpointsAsyncTask(this).executeWithNetworkCheck(ApiMethods.setWikiBubble, m);
+        }
+        else {
+            Toast.makeText(this,"No Content!",Toast.LENGTH_SHORT);
+        }
     }
-
-/*
-    @Override
-    public String DoBackgroundAction(String buffer) {
-        return buffer;
-    }
-*/
 
     @Override
     public void DoResult(String doBackgroundString) {
-        if(doBackgroundString == null || doBackgroundString.equals("NA")){
-            Toast.makeText(this,getResources().getString(R.string.Java_Servlet_Error),Toast.LENGTH_LONG).show();
-        }else {
-            Toast.makeText(this,getResources().getString(R.string.Java_Servlet_Post_Success),Toast.LENGTH_LONG).show();
-        }
+        Toast.makeText(this, getResources().getString(R.string.Java_Servlet_Post_Success), Toast.LENGTH_LONG).show();
     }
 
-    public Integer getUserId() {
+    public String getUserId() {
         SharedPreferences preferences = getSharedPreferences(getString(R.string.MY_SHARED_PREFERENCE), MODE_PRIVATE);
-        return preferences.getInt(getResources().getString(R.string.USER_ID), 0);
+        return preferences.getString(getResources().getString(R.string.USER_ID), "0");
     }
 }

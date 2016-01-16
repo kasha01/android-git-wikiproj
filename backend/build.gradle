@@ -27,6 +27,7 @@ dependencies {
     compile 'com.google.appengine:appengine-endpoints-deps:1.9.18'
     compile 'javax.servlet:servlet-api:2.5'
     compile 'mysql:mysql-connector-java:5.1.38'
+    compile 'org.json:json:20151123'
 }
 
 appengine {
