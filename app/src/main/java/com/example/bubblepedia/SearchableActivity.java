@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -28,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 
 import Utility.ApiMethods;
-import Utility.HttpAsyncTask;
 import Utility.IDoAsyncAction;
 import Utility.WikiSearchResultTextView;
 
@@ -39,11 +39,14 @@ public class SearchableActivity extends AppCompatActivity implements IDoAsyncAct
     private List<String> list = new ArrayList<>();
     private SearchView searchView = null;
     private boolean IsPost = false;
+    private EditText txtBubbleSubject = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_searchable);
+        txtBubbleSubject = (EditText) findViewById(R.id.txtBubbleSubject);
+        txtBubbleSubject.setVisibility(View.VISIBLE);
 
         list.clear();
         adapter = new ArrayAdapter<String>(this, R.layout.wikisearch_listview_row, wikiSearchResult);
@@ -68,12 +71,12 @@ public class SearchableActivity extends AppCompatActivity implements IDoAsyncAct
 
     @Override
     protected void onNewIntent(Intent intent) {
-        Log.v("mytag","NewIntent");
+        Log.v("mytag", "NewIntent");
         super.onNewIntent(intent);
         handleIntent(intent);
     }
 
-    private void handleIntent(Intent intent){
+    private void handleIntent(Intent intent) {
         if (intent.ACTION_SEARCH.equals(Intent.ACTION_SEARCH)) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             try {
@@ -87,10 +90,11 @@ public class SearchableActivity extends AppCompatActivity implements IDoAsyncAct
     private void doSearch(String query) throws UnsupportedEncodingException {
         if (query != null && query != "") {
             IsPost = false;
+            txtBubbleSubject.setVisibility(View.INVISIBLE);
             query = URLEncoder.encode(query, "UTF-8");
-            if(query != null && query != ""){
-                Map<String,String> m = new HashMap<>();
-                m.put("wikisearch",query);
+            if (query != null && query != "") {
+                Map<String, String> m = new HashMap<>();
+                m.put("wikisearch", query);
                 new EndpointsAsyncTask(this).executeWithNetworkCheck(ApiMethods.getWikiOpenSearchResult, m);
                 saveQueryForSuggestion(query);
             }
@@ -136,20 +140,18 @@ public class SearchableActivity extends AppCompatActivity implements IDoAsyncAct
 
     @Override
     public void DoResult(String doBackgroundString) {
+        Log.v("mytag", "Searchable do result");
 
-        adapter.clear();
-        list.clear();
-
-        if (doBackgroundString == null) {
-            Toast.makeText(this, getResources().getString(R.string.Java_Servlet_Error), Toast.LENGTH_LONG).show();
-            return;
-        }else if (doBackgroundString != null && IsPost) {
-            Toast.makeText(this,getResources().getString(R.string.Java_Servlet_Post_Success),Toast.LENGTH_LONG).show();
+        if (IsPost) {
+            Toast.makeText(this, doBackgroundString, Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(this, WikiBubbleActivity.class);
+            startActivity(intent);
+            finish();
             return;
         }
 
-        IsPost = false; //reset Flag
-
+        adapter.clear();
+        list.clear();
         try {
             JSONArray jarray = new JSONArray(doBackgroundString);
             //String title = jarray.getString(0).toString();
@@ -165,34 +167,29 @@ public class SearchableActivity extends AppCompatActivity implements IDoAsyncAct
         //searchView.setQuery("", false);
         searchView.setIconified(true);
         searchView.clearFocus();
-        Log.v("mytag", "End Search");
     }
 
     public void postContentWithTag(View view) {
-        //Write to Db
-        IsPost = true;
-/*
-        String postParams = buildServletParams();
-        HttpAsyncTask task = new HttpAsyncTask(this);
-        task.executeWithNetworkCheck(getResources().getString(R.string.post_wiki_bubble_toDb_servlet_endpoint), "POST", postParams);
-*/
-        Map<String,String> m = new HashMap<>();
+        String wikiBubbleContent = getIntent().getStringExtra(WikiBubbleActivity.CONTENT_MESSAGE);
+        if (wikiBubbleContent == null || wikiBubbleContent.equals("")) {
+            Toast.makeText(this, "No Content to Post",Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Map<String, String> m = new HashMap<>();
         JSONArray jsonArray = new JSONArray();
         for (String s : list) {
             jsonArray.put(s);
         }
         Integer userId = 4;
-        String wikiBubbleContent = getIntent().getStringExtra(WikiBubbleActivity.CONTENT_MESSAGE);
-        m.put("userid",userId.toString());
-        m.put("content",wikiBubbleContent);
-        m.put("tag",jsonArray.toString());
-        new EndpointsAsyncTask(this).executeWithNetworkCheck(ApiMethods.setWikiBubble,m);
-        Intent intent = new Intent(this,WikiBubbleActivity.class);
-        startActivity(intent);
-        finish();
+        m.put("userid", userId.toString());
+        m.put("content", wikiBubbleContent);
+        m.put("tag", jsonArray.toString());
+        new EndpointsAsyncTask(this).executeWithNetworkCheck(ApiMethods.setWikiBubble, m);
+        IsPost = true;
     }
 
-    public void clearSearchHistory(MenuItem menuItem){
+    public void clearSearchHistory(MenuItem menuItem) {
         SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
                 MySuggestionProvider.AUTHORITY, MySuggestionProvider.MODE);
         suggestions.clearHistory();

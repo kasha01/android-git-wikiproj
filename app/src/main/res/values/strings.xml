@@ -20,5 +20,6 @@
 
     <string name="USER_ID">SIGNIN_TOKEN</string>
     <string name="MY_SHARED_PREFERENCE">MYPREF</string>
+    <string name="title_activity_home">HomeActivity</string>
 
 </resources>

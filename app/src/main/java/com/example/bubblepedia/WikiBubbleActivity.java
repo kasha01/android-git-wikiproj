@@ -16,10 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import Utility.ApiMethods;
-import Utility.EndpointsAsyncTaskHelper;
-import Utility.HttpAsyncTask;
 import Utility.IDoAsyncAction;
-import Utility.MasterParam;
 
 
 public class WikiBubbleActivity extends AppCompatActivity implements IDoAsyncAction {
@@ -75,7 +72,6 @@ public class WikiBubbleActivity extends AppCompatActivity implements IDoAsyncAct
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -96,20 +92,21 @@ public class WikiBubbleActivity extends AppCompatActivity implements IDoAsyncAct
         String userId = getUserId();
         TextView textView = (TextView) findViewById(R.id.bubbleTextview);
         String wikiBubbleContent = textView.getText().toString();
-        if (wikiBubbleContent != null && wikiBubbleContent != "") {
+        if (wikiBubbleContent != null && !wikiBubbleContent.equals("")) {
             Map<String, String> m = new HashMap<>();
             m.put("userid", userId);
             m.put("content", wikiBubbleContent);
             new EndpointsAsyncTask(this).executeWithNetworkCheck(ApiMethods.setWikiBubble, m);
         }
         else {
-            Toast.makeText(this,"No Content!",Toast.LENGTH_SHORT);
+            Toast.makeText(this,"No Content!",Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
     public void DoResult(String doBackgroundString) {
-        Toast.makeText(this, getResources().getString(R.string.Java_Servlet_Post_Success), Toast.LENGTH_LONG).show();
+        finish();
+        Toast.makeText(this, doBackgroundString, Toast.LENGTH_LONG).show();
     }
 
     public String getUserId() {

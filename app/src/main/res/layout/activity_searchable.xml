@@ -7,7 +7,14 @@
     android:orientation="vertical"
     tools:context="com.example.bubblepedia.SearchableActivity">
 
-
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Type a subject for your think bubble or simply tag it to a Wikipedia article"
+        android:text=""
+        android:id="@+id/txtBubbleSubject"
+        android:maxLength="80"
+        />
     <ListView
         android:id="@+id/list"
         android:layout_width="match_parent"
@@ -15,7 +22,6 @@
         android:layout_weight="1"
         android:layout_marginBottom="10dp"
         />
-
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

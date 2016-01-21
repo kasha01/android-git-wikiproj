@@ -16,7 +16,7 @@
         <EditText
             android:id="@+id/bubbleTextview"
             android:layout_width="match_parent"
-            android:layout_height="20dp"
+            android:layout_height="wrap_content"
             android:hint="@string/tell_us_your_thoughts"
             android:inputType="textMultiLine"
             android:scrollbarStyle="insideOverlay" />

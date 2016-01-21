@@ -10,5 +10,5 @@ import java.util.List;
  */
 public interface IDoAsyncAction {
    //public String DoBackgroundAction();
-    public void DoResult(String doBackgroundString);
+    void DoResult(String doBackgroundString);
 }

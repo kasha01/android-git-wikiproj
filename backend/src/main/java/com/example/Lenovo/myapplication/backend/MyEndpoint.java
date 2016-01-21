@@ -16,10 +16,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 import javax.inject.Named;
 
@@ -46,8 +42,8 @@ public class MyEndpoint {
      * A simple endpoint method that takes a name and says Hi back
      */
     @ApiMethod(name = "sayHi")
-    public MyBean sayHi(@Named("userid") String userid, @Named("content") String content, @Named("tag") String tag) throws Exception {
-        response.setData("Hiiiii, " + userid + content + tag);
+    public MyBean sayHi(@Named("name") String name) throws Exception {
+        response.setData("Hi," + name);
         return response;
     }
 
@@ -71,7 +67,6 @@ public class MyEndpoint {
         } finally {
             in.close();
         }
-
         response.setData(line);
         return response;
     }
@@ -89,13 +84,16 @@ public class MyEndpoint {
                 repo.SaveWikiBubbleTags(tagid, jsonArray.getString(i));
             }
         }
-        response.setData(userid + content + tag);
+        response.setData("We got your think bubble");
         return response;
     }
 
     @ApiMethod(name = "setWikiBubbleWithoutTag")
-    public void setWikiBubbleWithoutTag(@Named("userid") String userid, @Named("content") String content) throws Exception {
+    public MyBean setWikiBubbleWithoutTag(@Named("userid") String userid, @Named("content") String content) throws Exception {
         Repository repo = new Repository();
         repo.SaveWikiBubbleToDb(Integer.parseInt(userid), content);
+
+        response.setData("We got your think bubble");
+        return response;
     }
 }

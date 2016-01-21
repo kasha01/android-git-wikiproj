@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight">
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/img_btn_bubble_user"
+        android:background="@mipmap/ic_account"
+        />
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:id="@+id/txtHomeListViewRow_BubbleShort"
+        android:layout_weight="1"
+        android:text=""
+        android:gravity="center_vertical"
+        />
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/img_btn_arrow_bubbleDetail"
+        android:background="@drawable/arrow_right"
+        />
+
+</LinearLayout>

@@ -3,16 +3,27 @@ package com.example.Lenovo.myapplication.backend;
 /** The object model for the data we are sending through endpoints */
 public class MyBean {
 
-    public boolean isSuccess() {
-        return success;
+
+    public boolean isHasError() {
+        return hasError;
     }
 
-    public void setSuccess(boolean success) {
-        this.success = success;
+    public void setHasError(boolean hasError) {
+        this.hasError = hasError;
     }
 
-    private boolean success;
+    private boolean hasError;
     private String myData;
+
+    public String getMyMessage() {
+        return myMessage;
+    }
+
+    public void setMyMessage(String myMessage) {
+        this.myMessage = myMessage;
+    }
+
+    private String myMessage;
 
     public String getData() {
         return myData;

@@ -8,6 +8,7 @@ import android.util.Pair;
 import android.widget.Toast;
 
 import com.example.lenovo.myapplication.backend.myApi.MyApi;
+import com.example.lenovo.myapplication.backend.myApi.model.MyBean;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
@@ -20,21 +21,25 @@ import Utility.ApiMethods;
 import Utility.HelperClass;
 import Utility.IDoAsyncAction;
 
-public class EndpointsAsyncTask extends AsyncTask<Pair<Context,ApiMethods>, Void, String> {
+public class EndpointsAsyncTask extends AsyncTask<Pair<Context, ApiMethods>, Void, MyBean> {
     private static MyApi myApiService = null;
-    protected Map<String,String> params;
+    protected Map<String, String> params;
     private IDoAsyncAction action;
     private ProgressDialog progressDialog;
     private Context context;
 
-    public EndpointsAsyncTask(Context handle) {
-        this.action = (IDoAsyncAction) handle;
-        this.context = handle;
+    public EndpointsAsyncTask(Context context, IDoAsyncAction... handle) {
+        if (handle != null && handle.length > 0) {
+            this.action = handle[0];
+        }else{
+            this.action = (IDoAsyncAction) context;
+        }
+        this.context = context;
     }
 
     @Override
-    protected String doInBackground(Pair<Context,ApiMethods>...pairs) {
-        if(myApiService == null) {  // Only do this once
+    protected MyBean doInBackground(Pair<Context, ApiMethods>... pairs) {
+        if (myApiService == null) {  // Only do this once
             MyApi.Builder builder = new MyApi.Builder(AndroidHttp.newCompatibleTransport(),
                     new AndroidJsonFactory(), null)
                     /* options for running agains Live App Engine
@@ -45,7 +50,7 @@ public class EndpointsAsyncTask extends AsyncTask<Pair<Context,ApiMethods>, Void
                     - turn off compression when running against local devappserver  */
 
                     .setRootUrl("http://10.0.2.2:8080/_ah/api/")
-                    //.setRootUrl("https://mytestproject-1812.appspot.com/_ah/api/")
+                            //.setRootUrl("https://mytestproject-1812.appspot.com/_ah/api/")
 
                     .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
                         @Override
@@ -58,43 +63,51 @@ public class EndpointsAsyncTask extends AsyncTask<Pair<Context,ApiMethods>, Void
 
         context = pairs[0].first;
 
+        MyBean bean = null;
         try {
-            return executeMyApiService(pairs[0].second,params);
+            bean = executeMyApiService(pairs[0].second, params);
+            bean.setHasError(false);
         } catch (Exception e) {
-            Log.v("mytag",e.getMessage());
-            return null;
+            bean.setHasError(true);
+            Log.v("mytag", e.getMessage());
+        } finally {
+            return bean;
         }
     }
 
-    private String executeMyApiService(ApiMethods apiServiceName, Map<String,String> params) throws Exception {
-        String returnValue = "";
-        switch (apiServiceName){
+    private MyBean executeMyApiService(ApiMethods apiServiceName, Map<String, String> params) throws Exception {
+        MyBean returnValue = null;
+        switch (apiServiceName) {
             case sayHi:
-                returnValue = myApiService.sayHi(params.get("name"), "maj", "ttt").execute().getData();
+                returnValue = myApiService.sayHi(params.get("name")).execute();
                 break;
             case getWikiOpenSearchResult:
-                returnValue = myApiService.getWikiOpenSearchResult(params.get("wikisearch")).execute().getData();
+                returnValue = myApiService.getWikiOpenSearchResult(params.get("wikisearch")).execute();
                 break;
             case setWikiBubble:
                 String tag = params.get("tag");
-                if(tag != null && tag != ""){
-                    myApiService.setWikiBubble(params.get("userid"),params.get("content"),params.get("tag")).execute().getData();
-                }else {
-                    myApiService.setWikiBubbleWithoutTag(params.get("userid"),params.get("content")).execute();
+                if (tag != null && tag != "") {
+                    returnValue = myApiService.setWikiBubble(params.get("userid"), params.get("content"), params.get("tag")).execute();
+                } else {
+                    returnValue = myApiService.setWikiBubbleWithoutTag(params.get("userid"), params.get("content")).execute();
                 }
                 break;
         }
         return returnValue;
     }
 
-    public void executeWithNetworkCheck(ApiMethods apiServiceName ,Map params){
+    public void executeWithNetworkCheck(ApiMethods apiServiceName, Map params) {
         this.params = params;
-        if(HelperClass.IsNetworkConnectionAvailable(this.context)){
+        if (HelperClass.IsNetworkConnectionAvailable(this.context)) {
             this.execute(new Pair<>(context, apiServiceName));
-        }
-        else {
+        } else {
             Toast.makeText(context, "No Network Connection", Toast.LENGTH_LONG).show();
         }
+    }
+
+    public void executeWithoutNetworkCheck(ApiMethods apiServiceName, Map params) {
+        this.params = params;
+        this.execute(new Pair<>(context, apiServiceName));
     }
 
     @Override
@@ -107,14 +120,21 @@ public class EndpointsAsyncTask extends AsyncTask<Pair<Context,ApiMethods>, Void
     }
 
     @Override
-    protected void onPostExecute(String s) {
+    protected void onPostExecute(MyBean bean) {
         //super.onPostExecute(s);
-        if(s != null){
+        if (bean == null || bean.getHasError()) {
             // Null is returned only in case of error in the doBackground
-            action.DoResult(s);
-        }else{
-            Toast.makeText(context,context.getResources().getString(R.string.Java_Servlet_Error),Toast.LENGTH_LONG).show();
-        }
+            Toast.makeText(context, context.getResources().getString(R.string.Java_Servlet_Error), Toast.LENGTH_LONG).show();
+        } else if (bean.getData() != null && !bean.getData().trim().equals("")) {
+            //Data returned...DoAction
+            Log.v("mytag", "2:" + bean.getData());
+            action.DoResult(bean.getData());
+        }/*
+        else if(bean.getMyMessage() != null && !bean.getMyMessage().trim().equals("")){
+            //No Data returned..but there is a custom message
+            Log.v("mytag","3:"+bean.getMyMessage());
+            action.DoReRoute(bean.getMyMessage());
+        }*/
         progressDialog.dismiss();
     }
 
@@ -123,4 +143,5 @@ public class EndpointsAsyncTask extends AsyncTask<Pair<Context,ApiMethods>, Void
         super.onCancelled();
         progressDialog.dismiss();
     }
+
 }

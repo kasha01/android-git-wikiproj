@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.bubblepedia" >
+    package="com.example.bubblepedia">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -9,10 +9,10 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:label="Bubble Pedia" >
+            android:label="Bubble Pedia">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,7 +22,7 @@
         <activity
             android:name=".SearchableActivity"
             android:label=""
-            android:launchMode="singleTop" >
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
@@ -33,12 +33,16 @@
         </activity>
         <activity
             android:name=".WikiBubbleActivity"
-            android:label="@string/title_activity_wiki_bubble" >
-        </activity>
+            android:label="@string/title_activity_wiki_bubble"></activity>
 
         <provider
             android:name=".MySuggestionProvider"
             android:authorities="com.example.MySuggestionProvider" />
+
+        <activity
+            android:name=".HomeActivity"
+            android:label="@string/title_activity_home"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
